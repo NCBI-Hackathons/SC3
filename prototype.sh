@@ -1,7 +1,7 @@
 #!/bin/bash
 
 display_usage() { 
-echo "Usage: $0 clinvar.vcf.gz [GENE] or [DISEASE]";
+echo "Usage: $0 clinvar.vcf.gz [GENE] or [DISEASE] ";
 echo "";
 echo "[GENE] = GENE ID ";
 echo "[DISEASE] = name of associated disase in clinvar";
@@ -65,7 +65,12 @@ fi
 
 
 #actual search
-zgrep $2 $1 | grep CLNSIG=5 | awk '{print $8}' | awk -F  ";" '/1/ {print $1}' | awk -F  "=" '/1/ {print $2}' >> $2.snps
 
+if [ "$3" = 5 ]; then 
+  zgrep $2 $1 | grep CLNSIG=5 | awk '{print $8}' | awk -F  ";" '/1/ {print $1}' | awk -F  "=" '/1/ {print $2}' >> $2-$3.snps
+  echo "SNPs written to $2-$3.snps"
+else
+  zgrep $2 $1 | awk '{print $8}' | awk -F  ";" '/1/ {print $1}' | awk -F  "=" '/1/ {print $2}' >> $2.snps
   echo "SNPs written to $2.snps"
+fi
 
