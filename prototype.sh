@@ -1,17 +1,18 @@
 #!/bin/bash
 
 display_usage() { 
-echo "Usage: $0 clinvar.vcf.gz [GENE] or [DISEASE] ";
+echo "Usage: $0 clinvar.vcf.gz [GENE] or [DISEASE] [CLINSIG]";
 echo "";
 echo "[GENE] = GENE ID ";
 echo "[DISEASE] = name of associated disase in clinvar";
+echo "[CLINSIG] = 5 for pathogenic and blank or nothing is all";
 echo "";
-echo " program takes clinvar database and a gene or disase";
-echo " and outputs a list of RSids of CLINVAR=5 ";
+echo " This program takes clinvar database and a gene or disase";
+echo " and outputs a list of RSids  ";
 echo "";
-echo " must list the clinvar.vcf.gz download file must have one of Gene or Disease";
+echo " You must list the clinvar.vcf.gz download file must have one of Gene or Disease";
 echo "";
-echo " program will automatically check to see if you have the";
+echo " The program will automatically check to see if you have the";
 echo " latest version of clinvar from NCBI site and automatically";
 echo " download the file if it does not match file on ftp site ";
 echo "";
@@ -67,10 +68,10 @@ fi
 #actual search
 
 if [ "$3" = 5 ]; then 
-  zgrep $2 $1 | grep CLNSIG=5 | awk '{print $8}' | awk -F  ";" '/1/ {print $1}' | awk -F  "=" '/1/ {print $2}' >> $2-$3.snps
+  zgrep $2 $1 | grep CLNSIG=5 | awk '{print $8}' | awk -F  ";" '/1/ {print $1}' | awk -F  "=" '/1/ {print $2}' > $2-$3.snps
   echo "SNPs written to $2-$3.snps"
 else
-  zgrep $2 $1 | awk '{print $8}' | awk -F  ";" '/1/ {print $1}' | awk -F  "=" '/1/ {print $2}' >> $2.snps
+  zgrep $2 $1 | awk '{print $8}' | awk -F  ";" '/1/ {print $1}' | awk -F  "=" '/1/ {print $2}' > $2.snps
   echo "SNPs written to $2.snps"
 fi
 
