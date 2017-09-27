@@ -24,13 +24,13 @@ From a set of patients you can observe gene- or disease-specific variant express
 
 ### Implementation
 
-*prototype.sh collects relevent SNP RSids from ClinVar. This script takes 3 arguments; the clinvar database in gzipped vcf format, a relavant GENEid or Disease name, and the Clinical significance cutoff. Currently the clinical significance cutoff is either 5 for pathogenic, or all SNPs related to the disease regardless of pathogenicity. Also of note, in most cases, Disease names with spaces are often coded in the clinvar vcf file as underscores "_". It may be preferable to search a partial name of the Disease rather than the complete name. The output of this program will be a list of RSids that will be used in the next step.
+- prototype.sh collects relevent SNP RSids from ClinVar. This script takes 3 arguments; the clinvar database in gzipped vcf format, a relavant GENEid or Disease name, and the Clinical significance cutoff. Currently the clinical significance cutoff is either 5 for pathogenic, or all SNPs related to the disease regardless of pathogenicity. Also of note, in most cases, Disease names with spaces are often coded in the clinvar vcf file as underscores "_". It may be preferable to search a partial name of the Disease rather than the complete name. The output of this program will be a list of RSids that will be used in the next step.
 
-*a script extracts all SRRs from a given BioProject, and uses ArrayExpressed to check for good datasets
+- a script extracts all SRRs from a given BioProject, and uses ArrayExpressed to check for good datasets
 
-*The list of SRAs and RS nimbers are then combined using the [PSST](https://github.com/NCBI-Hackathons/PSST) package from a previous NCBI Hackathon. <Jake Write this section> 
+- The list of SRAs and RS nimbers are then combined using the [PSST](https://github.com/NCBI-Hackathons/PSST) package from a previous NCBI Hackathon. <Jake Write this section> 
 
-*Cell-specific SNP information is analyzed with R <info here, example below>
+- Cell-specific SNP information is analyzed with R <info here, example below>
 
 ### Confounding Factors
 - Entrez sometimes has 404 (and other errors).
