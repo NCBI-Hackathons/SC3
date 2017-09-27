@@ -38,7 +38,7 @@ From a set of patients you can observe gene- or disease-specific variant express
 - Identifying SRA records that are cell-lines or cancer samples
 - Dealing with non-expressed alleles by using missing values
 - Treating homozygosity & heterozygosity intelligently
-
+- How to deal with SNPs that lie beside non-genic/intron regions? PSST/Magic-blast may have issues with this
 
 ### Future Directions
 
