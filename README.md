@@ -7,4 +7,9 @@ Several diseases have been linked to mutations, however not all individuals with
 ![Workflow Diagram](https://github.com/NCBI-Hackathons/Amelia/blob/master/workflow.image.png)
 
 
+
 Initially a disease for which gene expression data is available is selected.  As an example, we select the diabetes cohort from SRA.  RNASeq data from diabetes and control patients is extracted.  In addition, we select a set of genes pertaining to a disease-causing mutation of interest.  We select cystic fibrosis causing SNPs from ClinVar that are extracted using routines written in Python. We hope that this will provide additional insight onto the links between cystic fibrosis and diabetes.  
+
+Our workflow uses multiple programs. Step 1 is to collect relavant SNP RSids from Clinvar usng the prototype.sh. This script takes 3 arguments; the clinvar database in gzipped vcf format, a relavant GENEid or Disease name, and the Clinical significance cutoff. Currently th clinical significance cutoff is either 5 for pathogenic, or all SNPs related to the disease regardless of pathogenicity. Also of note, in most cases, Disase names with spaces are often coded in the clinvar vcf file as underscores "_". It may be preferable to search a partial name of the Disase rather than the complete name. The output of this program will be a list of RSids that will be used in the next step.
+
+
