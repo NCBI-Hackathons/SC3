@@ -4,17 +4,18 @@ display_usage() {
 echo "Usage: $0 clinvar.vcf.gz [GENE] or [DISEASE] [CLINSIG]";
 echo "";
 echo "[GENE] = GENE ID ";
-echo "[DISEASE] = name of associated disase in clinvar";
-echo "[CLINSIG] = 5 for pathogenic and blank or nothing is all";
+echo "[DISEASE] = name of associated disase in clinvar ";
+echo "[CLINSIG] = 5 for pathogenic, otherwise report all SNPs";
 echo "";
-echo " This program takes clinvar database and a gene or disase";
-echo " and outputs a list of RSids  ";
+echo " This program takes clinvar database in GRCh37, a gene or disase,";
+echo " and weather you want pathogenic or all variants as input and  ";
+echo " outputs a list of RSids related to that disease. ";
 echo "";
 echo " You must list the clinvar.vcf.gz download file must have one of Gene or Disease";
 echo "";
-echo " The program will automatically check to see if you have the";
-echo " latest version of clinvar from NCBI site and automatically";
-echo " download the file if it does not match file on ftp site ";
+echo " The program will automatically check to see if you have the latest";
+echo " version of clinvar from the NCBI ftp site and automatically download";
+echo " the file if your version does not match file on the ftp site ";
 echo "";
 }
 
@@ -25,13 +26,6 @@ echo "";
 		exit 1
 	fi 
  
-# check whether user had supplied -h or --help . If yes display usage 
-	if [[ ( $# == "--help") ||  $# == "-h" ]] 
-	then 
-		display_usage
-		exit 0
-	fi 
-
 
 ADDRESS="ftp.ncbi.nlm.nih.gov"
 SRC_DIR="pub/clinvar/vcf_GRCh37/"
@@ -64,14 +58,13 @@ else
 fi
 
 
-
 #actual search
 
 if [ "$3" = 5 ]; then 
-  zgrep $2 $1 | grep CLNSIG=5 | awk '{print $8}' | awk -F  ";" '/1/ {print $1}' | awk -F  "=" '/1/ {print $2}' > $2-$3.snps
+  zgrep -i $2 $1 | grep CLNSIG=5 | awk '{print $8}' | awk -F  ";" '/1/ {print $1}' | awk -F  "=" '/1/ {print $2}' > $2-$3.snps
   echo "SNPs written to $2-$3.snps"
 else
-  zgrep $2 $1 | awk '{print $8}' | awk -F  ";" '/1/ {print $1}' | awk -F  "=" '/1/ {print $2}' > $2.snps
+  zgrep -i $2 $1 | awk '{print $8}' | awk -F  ";" '/1/ {print $1}' | awk -F  "=" '/1/ {print $2}' > $2.snps
   echo "SNPs written to $2.snps"
 fi
 
