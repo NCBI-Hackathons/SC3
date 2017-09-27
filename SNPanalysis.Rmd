@@ -1,0 +1,177 @@
+---
+title: "Analyzing Diabetes SNP data"
+author: "Jalal K. Siddiqui, PhD"
+date: "9/27/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##### Introduction
+
+This R markdown file will contain and outline code that we use to analyze CFTR SNPs on a cohort of diabetic patients and controls.  This is the final steps of the workflow.   
+
+##### Inputting Files
+
+The first step is inputting the data from the csv file.  This is done below.  
+
+```{r}
+diabetes.data <- read.csv("diabetes_and_cftr.csv")
+head(diabetes.data)
+```
+
+The next step is to develop a binary matrix containing data whether a certain SNP is present in an SRA sample or not.  
+
+This is done as follows
+
+```{r}
+
+##number of rows in diabetic data/same as total SRA samples
+rows.diabetes.data <- dim(diabetes.data)[1]
+
+##all.snps captures all snps in homozygous and heterozygous set
+all.snps <- c()
+for (i in 1:rows.diabetes.data){
+    entry.set.homozy <- unlist(strsplit(as.character(diabetes.data$Homozygous.SNPs[i]), split = ";"))
+    entry.set.heterz <- unlist(strsplit(as.character(diabetes.data$Heterozygous.SNPs[i]), split = ";"))
+    all.snps <- c(all.snps, entry.set.homozy, entry.set.heterz)
+}
+
+##takes the unique SNPs
+unique.snps <- unique(all.snps)
+
+##develops and writes a matrix.snps that is binary 1 and 0 matrix describing whether a SNP is present or absent in a particular SRA sample
+matrix.snps <- matrix(0, nrow = rows.diabetes.data, length(unique.snps))
+rownames(matrix.snps) <- diabetes.data$SRA
+colnames(matrix.snps) <- unique.snps
+
+for (i in 1:length(unique.snps)){
+   index.homoz <- grep(pattern = colnames(matrix.snps)[i], as.character(diabetes.data$Homozygous.SNPs))
+   index.heter <- grep(pattern = colnames(matrix.snps)[i], as.character(diabetes.data$Heterozygous.SNPs))
+   matrix.snps[index.homoz,i] <- 1
+   matrix.snps[index.heter,i] <- 1
+}
+
+
+```
+
+A meta object is also made that contains sample information on disease state
+
+```{r}
+meta.obj <- data.frame('name' = diabetes.data$SRA, 'Disease' = diabetes.data$Disease.State)
+rownames(meta.obj) <- diabetes.data$SRA
+```
+
+##### SNP Frequency
+
+We can see the SNP frequency as below.  
+
+```{r}
+Snp.Frequency <- colSums(matrix.snps)
+hist(Snp.Frequency, breaks = 100)
+```
+
+##### Principal Component Analysis
+
+We can do a principal component analysis of the SNP data.  This is done as follows.  
+
+```{r}
+pca.diabetes <- prcomp(matrix.snps)
+library(plotly)
+pca1.diab <- pca.diabetes$x[,"PC1"]
+pca2.diab <- pca.diabetes$x[,"PC2"]
+
+pca.df <- data.frame('PC1' = pca1.diab, 'PC2' = pca2.diab)
+pca.df <- data.frame('name' = meta.obj$name, pca.df, 'Disease' = meta.obj$Disease)
+plot_ly(data = pca.df, x = ~PC1, y = ~PC2, text = ~name, color = ~Disease, colors = c("black", "red"))
+```
+
+##### Chi-Square Test
+
+Let's do a series of chi-square tests.
+
+Make a function for a test matrix.  
+
+```{r}
+test.matrix.snp <- function(index.snp){
+    snp.vector <- matrix.snps[,index.snp]
+    snp.vector.disease <- snp.vector[diabetes.data$Disease.State == 'type ii diabetes mellitus']
+    snp.vector.normal <- snp.vector[diabetes.data$Disease.State == 'normal']
+    matrix.store <- matrix(0,nrow = 2, ncol = 2)
+    rownames(matrix.store) <- c("snp+", "snp-")
+    colnames(matrix.store) <- c("disease", "normal")
+    matrix.store[1,1] <- sum(snp.vector.disease)
+    matrix.store[2,1] <- length(snp.vector.disease) - sum(snp.vector.disease)
+    matrix.store[1,2] <- sum(snp.vector.normal)
+    matrix.store[2,2] <- length(snp.vector.normal) - sum(snp.vector.normal)
+    test.matrix.snp <- matrix.store
+    return(test.matrix.snp)
+    
+}
+```
+
+Do some sanity checks on the test matrices
+
+```{r}
+sum.test <- c()
+for (i in 1:length(unique.snps)){
+    sum.test[i] <- sum(test.matrix.snp(i))
+}
+
+disease.count <- c()
+for (i in 1:length(unique.snps)){
+    disease.count[i] <- colSums(test.matrix.snp(i))[1]
+}
+
+normal.count <- c()
+for (i in 1:length(unique.snps)){
+    normal.count[i] <- colSums(test.matrix.snp(i))[2]
+}
+
+```
+
+
+The chi-square test is run as follows.  
+
+```{r}
+p.value.list <- c()
+
+for (i in 1:length(unique.snps)){
+obj <- chisq.test(test.matrix.snp(i)+1)
+p.value.list <- c(p.value.list, obj$p.value)
+}
+
+names(p.value.list) <- as.character(unique.snps)
+
+hist(p.value.list)
+
+p.adjust.list <- p.adjust(p.value.list, method = "bonferroni")
+
+hist(p.adjust.list)
+```
+
+##### Fisher's Exact Test
+
+We can run Fisher's Exact test.  
+
+```{r}
+p.value.list.fisher <- c()
+
+for (i in 1:length(unique.snps)){
+obj <- fisher.test(test.matrix.snp(i))
+p.value.list.fisher <- c(p.value.list.fisher, obj$p.value)
+}
+
+names(p.value.list.fisher) <- as.character(unique.snps)
+
+hist(p.value.list.fisher)
+
+p.adjust.list.fisher <- p.adjust(p.value.list.fisher, method = "bonferroni")
+
+hist(p.adjust.list.fisher)
+```
+
+##### Incorporating More Sample Data
+
