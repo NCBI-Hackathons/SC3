@@ -2,6 +2,8 @@
 
 ## Call Gene Specific Pathogenic SNPs on the Fly!
 
+This project enables finding expressed SNPs in SRA data associated with a Bioproject record.
+
 ### SC3 pipeline
 
 ![Flowchart](SC3_flowchart.png)
@@ -29,6 +31,12 @@ From a set of patients you can observe gene- or disease-specific variant express
 *The list of SRAs and RS nimbers are then combined using the [PSST](https://github.com/NCBI-Hackathons/PSST) package from a previous NCBI Hackathon. <Jake Write this section> 
 
 *Cell-specific SNP information is analyzed with R <info here, example below>
+
+### Confounding Factors
+- Identifying SRA records that are cell-lines or cancer samples
+- Dealing with non-expressed alleles by using missing values
+- Treating homozygosity & heterozygosity intelligently
+
 
 ### Future Directions
 
