@@ -15,11 +15,13 @@ This R markdown file will contain and outline code that we use to analyze CFTR S
 
 ##### Inputting Files
 
-The first step is inputting the data from the csv file.  This is done below.  
+The first step is inputting the data from the csv file.  This is done below.  We have 3514 samples from SRA.
 
 ```{r}
-diabetes.data <- read.csv("diabetes_and_cftr.csv")
+rm(list = ls())
+diabetes.data <- read.csv("new_diabetes_and_cftr.csv")
 head(diabetes.data)
+dim(diabetes.data)
 ```
 
 The next step is to develop a binary matrix containing data whether a certain SNP is present in an SRA sample or not.  
@@ -54,8 +56,10 @@ for (i in 1:length(unique.snps)){
    matrix.snps[index.heter,i] <- 1
 }
 
-
+dim(matrix.snps)
 ```
+
+We have 2514 samples with 189 SNPs
 
 A meta object is also made that contains sample information on disease state
 
@@ -189,15 +193,18 @@ rownames(add.samp.meta) <- add.samp.meta$`Comment[ENA_RUN]`
 add.samp.meta <- data.frame(add.samp.meta, 'name' = rownames(add.samp.meta))
 
 samp.total.meta <- add.samp.meta[rownames(meta.obj),]
-
+dim(samp.total.meta)
 ```
 
 We want to redo this analysis by only taking cell samples that are of decent quality
 
 ```{r}
 good.quality.list <- which(samp.total.meta$Characteristics.single.cell.well.quality == 'OK')
+length(good.quality.list)
 
 ```
+
+From 3512 samples, only 2209 are of good quality.  
 
 Let's get a matrix and meta object with only good quality samples.  
 
@@ -222,8 +229,6 @@ plot_ly(data = pca.df.q, x = ~PC1, y = ~PC2, text = ~name, color = ~Cell, colors
 Let's remove the ductal, acinar, and unclassified cells from the analysis.  
 
 ```{r}
-
-
 noductal.list <- which(meta.quality$Characteristics.cell.type. != "ductal cell" & meta.quality$Characteristics.cell.type != "unclassified cell" & meta.quality$Characteristics.cell.type != "acinar cell")
 meta.quality.nd <- meta.quality[noductal.list,]
 matrix.quality.snps.nd <- matrix.quality.snps[noductal.list,]
@@ -248,4 +253,43 @@ We can also color code by patient ID.
 plot_ly(data = pca.df.q.nd, x = ~PC1, y = ~PC2, text = ~name, color = ~Patient, colors = c("black", "blue", "red", "green", "yellow", "orange", "magenta", "gray", "brown", "purple", "pink"))
 ```
 
-##
+##### Ductal Cells
+
+We will do the PCA on the ductal cells alone.  First make the matrix and meta object for this information
+
+```{r}
+ductal.list <- which(meta.quality$Characteristics.cell.type. == "ductal cell")
+meta.quality.d <- meta.quality[ductal.list,]
+matrix.quality.snps.d <- matrix.quality.snps[ductal.list,]
+```
+
+Then do the PCA
+
+```{r}
+pca.quality.diabetes.d <- prcomp(matrix.quality.snps.d)
+library(plotly)
+pca1.diab.q.d <- pca.quality.diabetes.d$x[,"PC1"]
+pca2.diab.q.d <- pca.quality.diabetes.d$x[,"PC2"]
+
+pca.df.q.d <- data.frame('PC1' = pca1.diab.q.d, 'PC2' = pca2.diab.q.d)
+pca.df.q.d <- data.frame('name' = meta.quality.d$name, pca.df.q.d, 'Cell' = meta.quality.d$Characteristics.cell.type., 'Patient' = meta.quality.d$Characteristics.individual., 'Disease' = meta.quality.d$Characteristics.disease.)
+plot_ly(data = pca.df.q.d, x = ~PC1, y = ~PC2, text = ~name, color = ~Patient, colors = c("black", "blue", "red", "green", "yellow", "orange", "magenta", "gray", "brown", "purple", "pink", "gold", "darkred", "darkgreen", "darkblue", "darkorange"), symbol = ~Disease, symbols = c("circle", "o"))
+```
+
+You are able to analyze how different people are able to express gene-specific variants in real time.  You can see whether an individual's ductal cells are expressing variants of CFTR gene.  
+
+##### Averaging by Patients
+
+We plan to average the data by patients.  
+
+```{r}
+unique.patients <- unique(meta.quality.d$Characteristics.individual.)
+unique.patients
+
+mat.bypatient <- c()
+for (i in 1:10){
+    index.patient.i <- which(meta.quality.d$Characteristics.individual. == unique.patients[i])
+    mat.bypatient <- rbind(mat.bypatient, colMeans(matrix.quality.snps.d[index.patient.i,]))
+}
+```
+
