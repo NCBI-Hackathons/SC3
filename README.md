@@ -2,6 +2,10 @@
 
 ## Call Gene Specific Pathogenic SNPs on the Fly!
 
+### SC3 pipeline
+
+![Flowchart](SC3_flowchart.png)
+
 ### Functionality
 
 From a set of patients you can observe gene- or disease-specific variant expression in an individual in a cell-type specific manner.  
