@@ -33,6 +33,8 @@ From a set of patients you can observe gene- or disease-specific variant express
 *Cell-specific SNP information is analyzed with R <info here, example below>
 
 ### Confounding Factors
+- Entrez sometimes has 404 (and other errors).
+- Magic-BLAST seems to hang occasionally
 - Identifying SRA records that are cell-lines or cancer samples
 - Dealing with non-expressed alleles by using missing values
 - Treating homozygosity & heterozygosity intelligently
