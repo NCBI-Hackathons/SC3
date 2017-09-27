@@ -10,7 +10,7 @@
 
 From a set of patients you can observe gene- or disease-specific variant expression in an individual in a cell-type specific manner.  
 
-![For example:  You can see whether an individuals' pancreatic ductal cells are expressing variants in the CFTR gene.](https://github.com/NCBI-Hackathons/SC3/blob/master/pca.snp.example.tiff)
+![For example:  You can see whether an individuals' pancreatic ductal cells are expressing variants in the CFTR gene.](https://github.com/NCBI-Hackathons/SC3/blob/master/pca.snp.example.png)
 
 ### Usage
 
