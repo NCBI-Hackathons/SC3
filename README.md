@@ -29,3 +29,4 @@ For example:  You can see whether an individuals' pancreatic ductal cells are ex
 ### Future Directions
 
 *A shiny app that allows researchers to select cell type and individual patients as well as gene- or disease-specific variants and look for individual level differences.  
+*Then provide the SNP matrix for that specific patient in that particular cell as a dataframe.  
