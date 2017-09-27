@@ -1,4 +1,4 @@
-# Super Concise Single Cell Snp Caller!
+# (SC)<sup>3</sup> Super Concise Single Cell Snp Caller!
 
 ## Call Gene Specific Pathogenic SNPs on the Fly!
 
