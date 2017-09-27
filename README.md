@@ -12,4 +12,6 @@ Initially a disease for which gene expression data is available is selected.  As
 
 Our workflow uses multiple programs. Step 1 is to collect relavant SNP RSids from Clinvar usng the prototype.sh. This script takes 3 arguments; the clinvar database in gzipped vcf format, a relavant GENEid or Disease name, and the Clinical significance cutoff. Currently th clinical significance cutoff is either 5 for pathogenic, or all SNPs related to the disease regardless of pathogenicity. Also of note, in most cases, Disase names with spaces are often coded in the clinvar vcf file as underscores "_". It may be preferable to search a partial name of the Disase rather than the complete name. The output of this program will be a list of RSids that will be used in the next step.
 
+A list of SRAs is manually collected from the NCBI SRA database. In the future this step will be automated.
 
+The list of SRAs and RS nimbers are then combined using the [PSST](https://github.com/NCBI-Hackathons/PSST) package from a previous NCBI Hackathon. 
