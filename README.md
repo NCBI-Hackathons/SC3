@@ -2,6 +2,12 @@
 
 ## Call Gene Specific Pathogenic SNPs on the Fly!
 
+### Functionality
+
+From a set of patients you can observe gene- or disease-specific variant expression in an individual in a cell-type specific manner.  
+
+For example:  You can see whether an individuals' pancreatic ductal cells are expressing variants in the CFTR gene.  <image> 
+
 ### Usage
 
 ```Just input a (gene name OR disease of interest) AND an NCBI BioProject number!```
@@ -22,4 +28,5 @@
 
 ### Future Directions
 
-*Normalization by total reads
+*A shiny app that allows researchers to select cell type and individual patients as well as gene- or disease-specific variants and look for individual level differences.  
+*Then provide the SNP matrix for that specific patient in that particular cell as a dataframe.  
