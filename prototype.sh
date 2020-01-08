@@ -36,7 +36,7 @@ file1=`md5 -q $1`
 if [ ! -e $1.md5 ]; then
     lftp -c "$command" 
 fi
-file2=`cut -d* -f1 $1.md5`
+file2=`cut -d " " -f1 $1.md5`
 
 if [ ! -e $1 ]; then
     lftp -c "$command2"
@@ -61,10 +61,10 @@ fi
 #actual search
 
 if [ "$3" = 5 ]; then 
-  zgrep -i $2 $1 | grep CLNSIG=5 | awk '{print $8}' | awk -F  ";" '/1/ {print $1}' | awk -F  "=" '/1/ {print $2}' > $2-$3.snps
+  zgrep -i $2 $1 | grep "CLNSIG=4\|CLNSIG=5" | awk '{print $8}' |  awk -F ";" '{for (i=1;i<=NF;i++) { if ($i ~ /RS=/) { printf " %s",$i; }  } print ""  }' | awk -F  "=" '/1/ {print $2}' > $2-$3.snps
   echo "SNPs written to $2-$3.snps"
 else
-  zgrep -i $2 $1 | awk '{print $8}' | awk -F  ";" '/1/ {print $1}' | awk -F  "=" '/1/ {print $2}' > $2.snps
+  zgrep -i $2 $1 | awk '{print $8}' |  awk -F ";" '{for (i=1;i<=NF;i++) { if ($i ~ /RS=/) { printf " %s",$i; }  } print ""  }' | awk -F  "=" '/1/ {print $2}' > $2.snps
   echo "SNPs written to $2.snps"
 fi
 
