@@ -32,7 +32,7 @@ SRC_DIR="pub/clinvar/vcf_GRCh37/"
 command="open -e \"get $SRC_DIR$1.md5 ; exit \" \"$ADDRESS\""
 command2="open -e \"get $SRC_DIR$1 ; exit \" \"$ADDRESS\""
 
-file1=`md5 -q $1`
+file1=`md5sum $1 | awk '{ print $1 }'`
 if [ ! -e $1.md5 ]; then
     lftp -c "$command" 
 fi
@@ -48,7 +48,7 @@ echo "Using MD5 file: $1.md5"
 echo $file1
 echo $file2
 
-if [ $file1 != $file2 ]
+if [ "$file1" != "$file2" ]
 then
   echo "md5 sums mismatch"
   mv $1 $1.old
